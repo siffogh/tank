@@ -1,6 +1,7 @@
 var canvas, context;
 var player1, player2;
-var mouseX = 0, mouseY = 0;
+var mouseX, mouseY;
+var powerOfArrow, angleOfArrow;
 var Player = function(x) {
   this.health = 100;
   this.height = 50;
@@ -44,12 +45,7 @@ var Bullet = function(x, y, angle, velocity) {
 }
 
 var shootBullet = () => {
-  var dy = player1Arrow.fromY - player1Arrow.toY;
-  var dx = player1Arrow.toX - player1Arrow.fromX;
-  angle = Math.atan2(dy, dx);
-  power = Math.sqrt((player1Arrow.toX-player1Arrow.fromX)*(player1Arrow.toX-player1Arrow.fromX) + (player1Arrow.toY-player1Arrow.fromY)*(player1Arrow.toY-player1Arrow.fromY));;
-  power /= 2;
-  bullet = new Bullet(player1.x + player1.width + 10,player1.y,angle, power);
+  bullet = new Bullet(player1.x + player1.width + 10,player1.y,angleOfArrow, powerOfArrow);
 }
 
 var between = function(value, leftSide, rightSide) {
@@ -74,7 +70,6 @@ var getMousePosition = function(event) {
 window.onload = () => {
     canvas = document.getElementById('canvas');
     context = canvas.getContext('2d');
-    document.getElementById('shoot').addEventListener('click', shootBullet);
     // Create players
     player1 = new Player(20);
     player2 = new Player(canvas.width - 70);
@@ -102,12 +97,24 @@ var update = () => {
    context.fillRect(player1.x, player1.y - 10, player1.width * player1.health / 100 , 5);
    context.fillRect(player2.x, player2.y - 10, player2.width * player2.health / 100, 5);
 
-   drawArrow(player1Arrow.fromX, player1Arrow.fromY, player1Arrow.toX, player1Arrow.toY, 'red');
+   getAngleAndPower();
+   // Limit the Arrow to 90 degrees and 0 degrees
+   if (angleOfArrow*180/Math.PI <= 90 && angleOfArrow*180/Math.PI >= 0) {
+     drawArrow(player1Arrow.fromX, player1Arrow.fromY, player1Arrow.toX, player1Arrow.toY, 'red');
+   }
 
    if(window.bullet) {
       bullet.draw();
       bullet.collisionDetection();
     }
+}
+
+var getAngleAndPower = function() {
+  var dy = player1Arrow.fromY - player1Arrow.toY;
+  var dx = player1Arrow.toX - player1Arrow.fromX;
+  angleOfArrow = Math.atan2(dy, dx);
+  powerOfArrow = Math.sqrt((player1Arrow.toX-player1Arrow.fromX)*(player1Arrow.toX-player1Arrow.fromX) + (player1Arrow.toY-player1Arrow.fromY)*(player1Arrow.toY-player1Arrow.fromY));;
+  powerOfArrow /= 2;
 }
 
 var drawArrow = function(fromX, fromY, toX, toY, fillColor) {
