@@ -2,6 +2,19 @@ var canvas, context;
 var player1, player2;
 var mouseX, mouseY;
 var powerOfArrow, angleOfArrow;
+var turn;
+var Turn = function() {
+  this.numOfPlayers = 2;
+  this.currentTurn = 0;
+  this.nextTurn = () => {
+    this.currentTurn++;
+    this.currentTurn %= this.numOfPlayers;
+  }
+  this.draw = () => {
+    context.fillStyle = 'white';
+    context.fillText(canvas.width/2, 100);
+  }
+}
 var Player = function(x) {
   this.health = 100;
   this.height = 50;
@@ -25,32 +38,45 @@ var Bullet = function(x, y, angle, velocity) {
   this.vx = velocity * Math.cos(this.angle);
   this.vy = velocity * Math.sin(this.angle);
   this.t = 0;
-  this.dimension = 5;
+  this.radius = 5;
   this.draw = () => {
      if(this.y > canvas.height)
         return;
      context.beginPath();
-     context.ellipse(this.x, this.y, this.dimension, this.dimension, 0, 0, 2 * Math.PI);
+     context.ellipse(this.x, this.y, this.radius, this.radius, 0, 0, 2 * Math.PI);
      context.strokeStyle = 'white';
      context.stroke();
 
      this.x  = this.vx*this.t + this.xi;
      this.y =  this.yi - (this.vy * this.t + 0.5 * gravitation * this.t * this.t);
      this.t += 0.01;
+     if (this.collisionDetection()) {
+       return;
+     }
   }
   this.collisionDetection = () => {
 
-    //if (between(this.x, ))
+    if (turn.currentTurn == 0) {
+      if (between(this.x + this.radius, player2.x, player2.x + player2.width)) {
+        if (between(this.y + this.radius, player2.y, player2.y + player2.height)) {
+          player2.health -= 30;
+          return true;
+        }
+      }
+    }
   }
 }
 
 var shootBullet = () => {
-  bullet = new Bullet(player1.x + player1.width + 10,player1.y,angleOfArrow, powerOfArrow);
+  if (turn.currentTurn == 0) {
+    bullet = new Bullet(player1.x + player1.width + 10,player1.y,angleOfArrow, powerOfArrow);
+  }
 }
 
 var between = function(value, leftSide, rightSide) {
-  if (value >= leftSide && value <= rightSide)
+  if (value >= leftSide && value <= rightSide) {
     return true;
+  }
   return false;
 }
 
@@ -70,9 +96,11 @@ var getMousePosition = function(event) {
 window.onload = () => {
     canvas = document.getElementById('canvas');
     context = canvas.getContext('2d');
+
+    turn = new Turn();
     // Create players
     player1 = new Player(20);
-    player2 = new Player(canvas.width - 70);
+    player2 = new Player(canvas.width - 50 - 20);
 
     player1Arrow = new Arrow(player1.x + player1.width, player1.y);
 
@@ -99,17 +127,24 @@ var update = () => {
 
    getAngleAndPower();
    // Limit the Arrow to 90 degrees and 0 degrees
-   if (angleOfArrow*180/Math.PI <= 90 && angleOfArrow*180/Math.PI >= 0) {
-     drawArrow(player1Arrow.fromX, player1Arrow.fromY, player1Arrow.toX, player1Arrow.toY, 'red');
-   }
+   arrowLimit();
 
    if(window.bullet) {
       bullet.draw();
-      bullet.collisionDetection();
     }
 }
-
-var getAngleAndPower = function() {
+var arrowLimit = () => {
+  if (angleOfArrow*180/Math.PI >= 90) {
+    angleOfArrow = Math.PI / 2;
+  }
+  else if (angleOfArrow*180/Math.PI <= 0) {
+    angleOfArrow = 0;
+  }
+  else {
+    drawArrow(player1Arrow.fromX, player1Arrow.fromY, player1Arrow.toX, player1Arrow.toY, 'red');
+  }
+}
+var getAngleAndPower = () => {
   var dy = player1Arrow.fromY - player1Arrow.toY;
   var dx = player1Arrow.toX - player1Arrow.fromX;
   angleOfArrow = Math.atan2(dy, dx);
