@@ -1,5 +1,6 @@
 var canvas, context;
 var player1, player2;
+var bullet;
 var mouseX, mouseY;
 var powerOfArrow, angleOfArrow;
 var turn;
@@ -39,23 +40,25 @@ var Bullet = function(x, y, angle, velocity) {
   this.vy = velocity * Math.sin(this.angle);
   this.t = 0;
   this.radius = 5;
+  this.deleted = false;
   this.draw = () => {
-     if(this.y > canvas.height)
+      if(this.y > canvas.height) {
         return;
-     context.beginPath();
-     context.ellipse(this.x, this.y, this.radius, this.radius, 0, 0, 2 * Math.PI);
-     context.strokeStyle = 'white';
-     context.stroke();
+      }
+      if (this.collisionDetection()) {
+        this.deleted = true;
+        return;
+      }
+      context.beginPath();
+      context.ellipse(this.x, this.y, this.radius, this.radius, 0, 0, 2 * Math.PI);
+      context.strokeStyle = 'white';
+      context.stroke();
 
-     this.x  = this.vx*this.t + this.xi;
-     this.y =  this.yi - (this.vy * this.t + 0.5 * gravitation * this.t * this.t);
-     this.t += 0.01;
-     if (this.collisionDetection()) {
-       return;
-     }
+      this.x  = this.vx*this.t + this.xi;
+      this.y =  this.yi - (this.vy * this.t + 0.5 * gravitation * this.t * this.t);
+      this.t += 0.01;
   }
   this.collisionDetection = () => {
-
     if (turn.currentTurn == 0) {
       if (between(this.x + this.radius, player2.x, player2.x + player2.width)) {
         if (between(this.y + this.radius, player2.y, player2.y + player2.height)) {
@@ -64,6 +67,7 @@ var Bullet = function(x, y, angle, velocity) {
         }
       }
     }
+    return false;
   }
 }
 
@@ -129,8 +133,9 @@ var update = () => {
    // Limit the Arrow to 90 degrees and 0 degrees
    arrowLimit();
 
-   if(window.bullet) {
+   if(window.bullet && !bullet.deleted) {
       bullet.draw();
+
     }
 }
 var arrowLimit = () => {
