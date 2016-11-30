@@ -185,14 +185,13 @@ var arrowLimit = () => {
       return true;
     }
   }
-  else {// BUGGED
-    console.log(angleOfArrow*180/Math.PI);
-    if (angleOfArrow*180/Math.PI < 90) {
-      angleOfArrow = Math.PI / 2;
+  else {
+    if (angleOfArrow*180/Math.PI < -90) {
+      angleOfArrow = Math.PI;
       return true;
-    }// BUGGED
-    else if (angleOfArrow*180/Math.PI > 180) {
-      angleOfArrow = 0;
+    }
+    else if (angleOfArrow*180/Math.PI < 90) {
+      angleOfArrow = Math.PI / 2;
       return true;
     }
   }
@@ -203,14 +202,17 @@ var getAngleAndPower = () => {
   if (turn.currentTurn % 2 === 0) {
     dy = player1Arrow.fromY - player1Arrow.toY;
     dx = player1Arrow.toX - player1Arrow.fromX;
+    powerOfArrow = Math.sqrt((player1Arrow.toX-player1Arrow.fromX)*(player1Arrow.toX-player1Arrow.fromX) + (player1Arrow.toY-player1Arrow.fromY)*(player1Arrow.toY-player1Arrow.fromY));
+
   }
   else {
     dy = player2Arrow.fromY - player2Arrow.toY;
     dx = player2Arrow.toX - player2Arrow.fromX;
+    powerOfArrow = Math.sqrt((player2Arrow.toX-player2Arrow.fromX)*(player2Arrow.toX-player2Arrow.fromX) + (player2Arrow.toY-player2Arrow.fromY)*(player2Arrow.toY-player2Arrow.fromY));
+
   }
   angleOfArrow = Math.atan2(dy, dx);
-  powerOfArrow = Math.sqrt((player1Arrow.toX-player1Arrow.fromX)*(player1Arrow.toX-player1Arrow.fromX) + (player1Arrow.toY-player1Arrow.fromY)*(player1Arrow.toY-player1Arrow.fromY));;
-  powerOfArrow /= 2;
+  powerOfArrow /= 3;
 }
 
 var drawArrow = function(fromX, fromY, toX, toY, fillColor) {
