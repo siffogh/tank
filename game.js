@@ -83,11 +83,13 @@ var Bullet = function(x, y, angle, velocity) {
 }
 
 var shootBullet = () => {
+
+  console.log(180 * angleOfArrow / Math.PI);
   if (turn.currentTurn == 0) {
     bullet = new Bullet(player1.x + player1.width + 10,player1.y, angleOfArrow, powerOfArrow);
   }
   else {
-    bullet = new Bullet(player2.x - 10,player2.y, 3*Math.PI/2 - angleOfArrow, powerOfArrow);
+    bullet = new Bullet(player2.x - 10,player2.y, angleOfArrow, powerOfArrow);
   }
 }
 
@@ -173,21 +175,39 @@ var update = () => {
   }
 }
 var arrowLimit = () => {
-  if (angleOfArrow*180/Math.PI >= 90) {
-    angleOfArrow = Math.PI / 2;
-    return true;
+  if (turn.currentTurn % 2 === 0) {
+    if (angleOfArrow*180/Math.PI >= 90) {
+      angleOfArrow = Math.PI / 2;
+      return true;
+    }
+    else if (angleOfArrow*180/Math.PI <= 0) {
+      angleOfArrow = 0;
+      return true;
+    }
   }
-  else if (angleOfArrow*180/Math.PI <= 0) {
-    angleOfArrow = 0;
-    return true;
+  else {// BUGGED
+    console.log(angleOfArrow*180/Math.PI);
+    if (angleOfArrow*180/Math.PI < 90) {
+      angleOfArrow = Math.PI / 2;
+      return true;
+    }// BUGGED
+    else if (angleOfArrow*180/Math.PI > 180) {
+      angleOfArrow = 0;
+      return true;
+    }
   }
-  else {
-    return false;
-  }
+  return false;
 }
 var getAngleAndPower = () => {
-  var dy = player1Arrow.fromY - player1Arrow.toY;
-  var dx = player1Arrow.toX - player1Arrow.fromX;
+  var dy, dx;
+  if (turn.currentTurn % 2 === 0) {
+    dy = player1Arrow.fromY - player1Arrow.toY;
+    dx = player1Arrow.toX - player1Arrow.fromX;
+  }
+  else {
+    dy = player2Arrow.fromY - player2Arrow.toY;
+    dx = player2Arrow.toX - player2Arrow.fromX;
+  }
   angleOfArrow = Math.atan2(dy, dx);
   powerOfArrow = Math.sqrt((player1Arrow.toX-player1Arrow.fromX)*(player1Arrow.toX-player1Arrow.fromX) + (player1Arrow.toY-player1Arrow.fromY)*(player1Arrow.toY-player1Arrow.fromY));;
   powerOfArrow /= 2;
