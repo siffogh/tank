@@ -4,6 +4,8 @@ var bullet;
 var mouseX, mouseY;
 var powerOfArrow, angleOfArrow;
 var turn;
+var winCondition = 0;
+var shooting = false;
 var Turn = function() {
   this.numOfPlayers = 2;
   this.currentTurn = 0;
@@ -44,11 +46,25 @@ var Bullet = function(x, y, angle, velocity) {
   this.draw = () => {
     if(this.y > canvas.height) {
       this.deleted = true;
+      shooting = false;
+      turn.nextTurn();
+      return;
+    }
+    if (this.x <= 0) {
+      this.deleted = true;
+      shooting = false;
+      turn.nextTurn();
+      return;
+    }
+    if (this.x >= canvas.width) {
+      this.deleted = true;
+      shooting = false;
       turn.nextTurn();
       return;
     }
     if (this.collisionDetection()) {
       this.deleted = true;
+      shooting = false;
       turn.nextTurn();
       return;
     }
@@ -66,6 +82,9 @@ var Bullet = function(x, y, angle, velocity) {
       if (between(this.x + this.radius, player2.x, player2.x + player2.width)) {
         if (between(this.y + this.radius, player2.y, player2.y + player2.height)) {
           player2.health -= 25;
+          if (player2.health <= 0) {
+            winCondition = 1;
+          }
           return true;
         }
       }
@@ -74,6 +93,9 @@ var Bullet = function(x, y, angle, velocity) {
       if (between(this.x + this.radius, player1.x, player1.x + player1.width)) {
         if (between(this.y + this.radius, player1.y, player1.y + player1.height)) {
           player1.health -= 25;
+          if (player1.health <= 0) {
+            winCondition = 2;
+          }
           return true;
         }
       }
@@ -83,13 +105,15 @@ var Bullet = function(x, y, angle, velocity) {
 }
 
 var shootBullet = () => {
-
-  console.log(180 * angleOfArrow / Math.PI);
+  if (shooting) {return;}
+  
   if (turn.currentTurn == 0) {
     bullet = new Bullet(player1.x + player1.width + 10,player1.y, angleOfArrow, powerOfArrow);
+    shooting = true;
   }
   else {
     bullet = new Bullet(player2.x - 10,player2.y, angleOfArrow, powerOfArrow);
+    shooting = true;
   }
 }
 
@@ -131,20 +155,36 @@ window.onload = () => {
 
   canvas.addEventListener('mousemove', getMousePosition);
   canvas.addEventListener('click', shootBullet);
+  canvas.addEventListener('mousedown', function(event) {
+    if (winCondition != 0) {
+      winCondition = 0;
+      player1.health = 100;
+      player2.health = 100;
+    }
+  });
 
   var msgInput = document.querySelector('#msg');
   document.querySelector('#submit').addEventListener('click', () => window.msg = msgInput.value);
-
   window.msg = '';
+
   setInterval(update,1);
 }
 
 var update = () => {
-
-
   // Clean screen
   context.fillStyle = 'black';
   context.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (winCondition === 1) {
+    context.fillStyle = 'red';
+    context.fillText("Player 1 Wins", 400,200);
+    return;
+  }
+  if (winCondition === 2) {
+    context.fillStyle = 'blue';
+    context.fillText("Player 2 Wins", 400,200);
+    return;
+  }
   // Draw Player 1
   context.fillStyle = 'red';
   context.fillRect(player1.x, player1.y, player1.width, player1.height);
@@ -155,10 +195,14 @@ var update = () => {
   context.fillStyle = 'green';
   context.fillRect(player1.x, player1.y - 10, player1.width * player1.health / 100 , 5);
   context.fillRect(player2.x, player2.y - 10, player2.width * player2.health / 100, 5);
-
   // Draw msg
-  if(window.msg.length > 0)
+  if(window.msg.length > 0) {
     drawMessage(player1,window.msg);
+  }
+  // Draw Power and angle at mouse position
+  context.fillStyle = 'white';
+  context.fillText("Power: "+Math.floor(powerOfArrow)+", Angle: "+Math.floor(angleOfArrow*180/Math.PI), mouseX + 15, mouseY - 15);
+
   getAngleAndPower();
   // Limit the Arrow to 90 degrees and 0 degrees
   if (!arrowLimit()) {
