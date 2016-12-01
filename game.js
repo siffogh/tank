@@ -83,6 +83,7 @@ var Bullet = function(x, y, angle, velocity) {
         if (between(this.y + this.radius, player2.y, player2.y + player2.height)) {
           player2.health -= 25;
           if (player2.health <= 0) {
+            player2.health = 0;
             winCondition = 1;
           }
           return true;
@@ -94,6 +95,7 @@ var Bullet = function(x, y, angle, velocity) {
         if (between(this.y + this.radius, player1.y, player1.y + player1.height)) {
           player1.health -= 25;
           if (player1.health <= 0) {
+            player1.health = 0;
             winCondition = 2;
           }
           return true;
@@ -106,7 +108,7 @@ var Bullet = function(x, y, angle, velocity) {
 
 var shootBullet = () => {
   if (shooting) {return;}
-  
+
   if (turn.currentTurn == 0) {
     bullet = new Bullet(player1.x + player1.width + 10,player1.y, angleOfArrow, powerOfArrow);
     shooting = true;
@@ -274,5 +276,5 @@ var drawArrow = function(fromX, fromY, toX, toY, fillColor) {
 
 var drawMessage = (player, msg) => {
   context.fillStyle = 'yellow';
-  context.fillText(msg, player.x, player.y - 30, 50);
+  context.fillText(msg, player.x, player.y - 30);
 }
