@@ -218,7 +218,16 @@ var update = () => {
   	}
   	// Draw Power and angle at mouse position
   	context.fillStyle = 'white';
-  	context.fillText("Power: "+Math.floor(powerOfArrow)+", Angle: "+Math.floor(angleOfArrow*180/Math.PI), mouseX + 15, mouseY - 15);
+  	if (turn.currentTurn % 2 === 0) {
+	  	context.fillText("Power: " + Math.floor(powerOfArrow)
+	  	 	+ ", Angle: " + Math.floor(angleOfArrow*180/Math.PI),
+	  	 	 mouseX + 15, mouseY - 15);
+  	}
+  	else {
+  		context.fillText("Power: " + Math.floor(powerOfArrow)
+	  	 	+ ", Angle: " + Math.floor(180 - angleOfArrow*180/Math.PI),
+	  	 	 mouseX + 15, mouseY - 15);
+  	}	
   }
 
   if(window.bullet && !bullet.deleted) {
@@ -257,13 +266,15 @@ var getAngleAndPower = () => {
 	if (turn.currentTurn % 2 === 0) {
 		dy = player1Arrow.fromY - player1Arrow.toY;
 		dx = player1Arrow.toX - player1Arrow.fromX;
-		powerOfArrow = Math.sqrt((player1Arrow.toX-player1Arrow.fromX)*(player1Arrow.toX-player1Arrow.fromX) + (player1Arrow.toY-player1Arrow.fromY)*(player1Arrow.toY-player1Arrow.fromY));
+		powerOfArrow = Math.sqrt((player1Arrow.toX-player1Arrow.fromX)*(player1Arrow.toX-player1Arrow.fromX)
+							   + (player1Arrow.toY-player1Arrow.fromY)*(player1Arrow.toY-player1Arrow.fromY));
 
 	}
 	else {
 		dy = player2Arrow.fromY - player2Arrow.toY;
 		dx = player2Arrow.toX - player2Arrow.fromX;
-		powerOfArrow = Math.sqrt((player2Arrow.toX-player2Arrow.fromX)*(player2Arrow.toX-player2Arrow.fromX) + (player2Arrow.toY-player2Arrow.fromY)*(player2Arrow.toY-player2Arrow.fromY));
+		powerOfArrow = Math.sqrt((player2Arrow.toX-player2Arrow.fromX)*(player2Arrow.toX-player2Arrow.fromX)
+							   + (player2Arrow.toY-player2Arrow.fromY)*(player2Arrow.toY-player2Arrow.fromY));
 
 	}
 	angleOfArrow = Math.atan2(dy, dx);
