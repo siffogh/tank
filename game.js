@@ -184,11 +184,15 @@ var update = () => {
   if (winCondition === 1) {
   	context.fillStyle = 'red';
   	context.fillText("Player 1 Wins", 400,200);
+		context.fillStyle = 'white';
+		context.fillText("CLick to continue...", 400,400);
   	return;
   }
   if (winCondition === 2) {
   	context.fillStyle = 'blue';
   	context.fillText("Player 2 Wins", 400,200);
+		context.fillStyle = 'white';
+		context.fillText("CLick to continue...", 400,400);
   	return;
   }
   // Draw Player 1
@@ -205,7 +209,16 @@ var update = () => {
   if(window.msg.length > 0) {
   	drawMessage(player1,window.msg);
   }
-  
+
+	if (turn.currentTurn % 2 === 0) {
+		context.fillStyle = 'red';
+		context.fillText('Turn: Player 1', canvas.width/2 - 10, 100);
+	}
+	else {
+		context.fillStyle = 'blue';
+		context.fillText('Turn: Player 2', canvas.width/2 - 10, 100);
+	}
+
 
   getAngleAndPower();
   // Limit the Arrow to 90 degrees and 0 degrees
@@ -227,7 +240,7 @@ var update = () => {
   		context.fillText("Power: " + Math.floor(powerOfArrow)
 	  	 	+ ", Angle: " + Math.floor(180 - angleOfArrow*180/Math.PI),
 	  	 	 mouseX + 15, mouseY - 15);
-  	}	
+  	}
   }
 
   if(window.bullet && !bullet.deleted) {
