@@ -75,7 +75,11 @@ var Bullet = function(x, y, angle, velocity) {
 
 		this.x  = this.vx*this.t + this.xi;
 		this.y =  this.yi - (this.vy * this.t + 0.5 * gravitation * this.t * this.t);
+<<<<<<< HEAD
 		this.t += 0.02;
+=======
+		this.t += 0.01;
+>>>>>>> 8d17e0b5369676e880e0cf05b86575b036922cc8
 	}
 	this.collisionDetection = () => {
 		if (turn.currentTurn == 0) {
@@ -211,7 +215,10 @@ var update = () => {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 8d17e0b5369676e880e0cf05b86575b036922cc8
 	if (turn.currentTurn % 2 === 0) {
 		context.fillStyle = 'red';
 		context.fillText('Turn: Player 1', canvas.width/2 - 10, 100);
@@ -221,6 +228,9 @@ var update = () => {
 		context.fillText('Turn: Player 2', canvas.width/2 - 10, 100);
 	}
 
+<<<<<<< HEAD
+>>>>>>> 8d17e0b5369676e880e0cf05b86575b036922cc8
+=======
 >>>>>>> 8d17e0b5369676e880e0cf05b86575b036922cc8
 
   getAngleAndPower();
