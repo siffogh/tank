@@ -4,6 +4,7 @@ var bullet;
 var mouseX, mouseY;
 var powerOfArrow, angleOfArrow;
 var turn;
+var MAX_POWER = 151;
 var winCondition = 0;
 var shooting = false;
 var Turn = function() {
@@ -44,28 +45,11 @@ var Bullet = function(x, y, angle, velocity) {
 	this.radius = 5;
 	this.deleted = false;
 	this.draw = () => {
-		if(this.y > canvas.height) {
-			this.deleted = true;
-			shooting = false;
-			turn.nextTurn();
-			return;
-		}
-		if (this.x <= 0) {
-			this.deleted = true;
-			shooting = false;
-			turn.nextTurn();
-			return;
-		}
-		if (this.x >= canvas.width) {
-			this.deleted = true;
-			shooting = false;
-			turn.nextTurn();
-			return;
-		}
 		if (this.collisionDetection()) {
 			this.deleted = true;
 			shooting = false;
 			turn.nextTurn();
+			this.blowUp();
 			return;
 		}
 		context.beginPath();
@@ -78,6 +62,15 @@ var Bullet = function(x, y, angle, velocity) {
 		this.t += 0.02;
 	}
 	this.collisionDetection = () => {
+		if(this.y > canvas.height) {
+			return true;
+		}
+		if (this.x <= 0) {
+			return true;
+		}
+		if (this.x >= canvas.width) {
+			return true;
+		}
 		if (turn.currentTurn == 0) {
 			if (between(this.x + this.radius, player2.x, player2.x + player2.width)) {
 				if (between(this.y + this.radius, player2.y, player2.y + player2.height)) {
@@ -103,6 +96,16 @@ var Bullet = function(x, y, angle, velocity) {
 			}
 		}
 		return false;
+	}
+	this.blowUp = () => {
+		// BUG
+		// Draws for only a moment
+		// Draw a black circle
+		context.beginPath();
+		context.fillStyle = 'white';
+		context.arc(this.x, this.y, this.radius + 5, 0, Math.PI*2);
+		context.fill();
+
 	}
 }
 
@@ -146,6 +149,8 @@ var getMousePosition = function(event) {
 window.onload = () => {
 	canvas = document.getElementById('canvas');
 	context = canvas.getContext('2d');
+
+	context.lineWidth = 2;
 
 	turn = new Turn();
   // Create players
@@ -251,7 +256,7 @@ var update = () => {
   }
 }
 var arrowLimit = () => {
-	if (powerOfArrow > 150) {
+	if (powerOfArrow > MAX_POWER) {
 		return true;
 	}
 
