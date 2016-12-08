@@ -1,0 +1,24 @@
+{
+  "name": "tank",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Arrow.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siffogh/tank.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/siffogh/tank/issues"
+  },
+  "homepage": "https://github.com/siffogh/tank#readme",
+  "dependencies": {
+    "ejs": "^2.5.5",
+    "express": "^4.14.0"
+  }
+}

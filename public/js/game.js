@@ -25,7 +25,7 @@ var Player = function(x) {
 	this.width = 30;
   this.x = x; // x position
   this.y = canvas.height - this.height;
-}		
+}
 
 var getMousePosition = function(event) {
 	var rect = canvas.getBoundingClientRect();
